@@ -5,13 +5,16 @@ import android.content.Context
 import android.graphics.*
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import androidx.annotation.RequiresApi
+import kotlin.math.min
 
 class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
 
-    private final val cellSize: Float = 130f
-    private final val originX: Float = 155f
-    private final val originY: Float = 800f
+    private final val scaleFactor = 0.9f
+    private final var cellSize: Float = 0f
+    private final var originX: Float = 0f
+    private final var originY: Float = 0f
 
     @RequiresApi(Build.VERSION_CODES.O)
     private final val lightColor = Color.argb(255, 238,238,210)
@@ -36,15 +39,22 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
     private final val bitmaps = mutableMapOf<Int, Bitmap>()
     private final val paint = Paint()
 
+    var chessDelegate: ChessDelegate? = null
+
     init {
         loadBitmap()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onDraw(canvas: Canvas) {
+
+        val chessBoardSide = min(canvas.height, canvas.width) * scaleFactor
+        cellSize = chessBoardSide / 8f
+        originX = (canvas.width - chessBoardSide) / 2f
+        originY = (canvas.height - chessBoardSide) / 2f
+
         drawChessBoard(canvas)
         drawPieces(canvas)
-
     }
 
     private fun drawPieces(canvas: Canvas) {
@@ -53,7 +63,7 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
 
         for(row in 0..7) {
             for(col in 0..7) {
-                chessModel.pieceAt(col, row)?.let { drawPieceAt(canvas, col, row, it.resID)}
+                chessDelegate?.pieceAt(col, row)?.let { drawPieceAt(canvas, col, row, it.resID)}
             }
         }
     }
