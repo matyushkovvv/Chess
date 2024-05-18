@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d(TAG, "$chessModel")
         val chessView = findViewById<ChessView>(R.id.chess_view)
         chessView.chessDelegate = this
     }

@@ -8,7 +8,6 @@ class ChessModel {
 
     init {
         reset()
-        movePiece(0, 0, 0, 1)
     }
 
     fun movePiece(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int) {

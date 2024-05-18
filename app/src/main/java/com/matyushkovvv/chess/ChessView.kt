@@ -6,6 +6,7 @@ import android.graphics.*
 import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MotionEvent
 import androidx.annotation.RequiresApi
 import kotlin.math.min
 
@@ -15,11 +16,9 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
     private final var cellSize: Float = 0f
     private final var originX: Float = 0f
     private final var originY: Float = 0f
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private final val lightColor = Color.argb(255, 238,238,210)
-    @RequiresApi(Build.VERSION_CODES.O)
-    private final val darkColor = Color.argb(255, 118,150,86)
+    
+    private final val lightColor = Color.parseColor("#769656")
+    private final val darkColor = Color.parseColor("#eeeed2")
 
     private final val imgResIDs = setOf(
         R.drawable.king_white,
@@ -45,16 +44,34 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
         loadBitmap()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onDraw(canvas: Canvas) {
 
-        val chessBoardSide = min(canvas.height, canvas.width) * scaleFactor
+        val chessBoardSide = min(height, width) * scaleFactor
         cellSize = chessBoardSide / 8f
-        originX = (canvas.width - chessBoardSide) / 2f
-        originY = (canvas.height - chessBoardSide) / 2f
+        originX = (width - chessBoardSide) / 2f
+        originY = (height - chessBoardSide) / 2f
 
         drawChessBoard(canvas)
         drawPieces(canvas)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        when(event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                val col = ((event.x - originX) / cellSize).toInt()
+                val row = ((event.y - originY) / cellSize).toInt()
+                Log.d(TAG, "down (${col}, ${row})")
+            }
+            MotionEvent.ACTION_MOVE -> {
+                Log.d(TAG, "move")
+            }
+            MotionEvent.ACTION_UP -> {
+                val col = ((event.x - originX) / cellSize).toInt()
+                val row = ((event.y - originY) / cellSize).toInt()
+                Log.d(TAG, "up (${col}, ${row})")
+            }
+        }
+        return true
     }
 
     private fun drawPieces(canvas: Canvas) {
@@ -88,7 +105,6 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun drawChessBoard(canvas: Canvas) {
         for(row in 0..7) {
             for(col in 0..7) {
@@ -102,7 +118,6 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
         canvas.drawRect(originX, originY, originX + 8 * cellSize, originY + 8 * cellSize, paint)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun drawSquareAt(canvas: Canvas, col: Int, row: Int, isDark: Boolean) {
         paint.color = if (isDark) darkColor else lightColor
         canvas.drawRect(originX + cellSize * col, originY + cellSize * row, originX + cellSize * (col + 1), originY + cellSize * (row + 1), paint)
