@@ -1,11 +1,34 @@
 package com.matyushkovvv.chess
 
+import android.util.Log
+
 class ChessModel {
 
     var piecesBox = mutableSetOf<ChessPiece>()
 
     init {
         reset()
+        movePiece(0, 0, 0, 1)
+    }
+
+    fun movePiece(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int) {
+        val movingPiece = pieceAt(fromCol, fromRow) ?: return
+
+        pieceAt(toCol, toRow)?.let {
+            if(it.player == movingPiece.player) {
+                Log.d(TAG,
+                    "this action cannot be performed:\n" +
+                            "movePiece(${fromCol}, ${fromRow}, ${toCol}, ${toRow})")
+                return
+            }
+
+            piecesBox.remove(it)
+        }
+
+        movingPiece.col = toCol
+        movingPiece.row = toRow
+
+        Log.d(TAG, toString())
     }
 
     fun reset() {
@@ -32,6 +55,8 @@ class ChessModel {
 
         piecesBox.add(ChessPiece(4, 0, ChessPlayer.WHITE, ChessRank.KING, R.drawable.king_white))
         piecesBox.add(ChessPiece(4, 7, ChessPlayer.BLACK, ChessRank.KING, R.drawable.king_black))
+
+        Log.d(TAG, toString())
     }
 
     fun pieceAt(col: Int, row: Int) : ChessPiece? {
