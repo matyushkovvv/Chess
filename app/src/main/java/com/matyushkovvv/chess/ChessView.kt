@@ -37,6 +37,8 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
 
     private final val bitmaps = mutableMapOf<Int, Bitmap>()
     private final val paint = Paint()
+    private var fromCol: Int = -1
+    private var fromRow: Int = -1
 
     var chessDelegate: ChessDelegate? = null
 
@@ -58,17 +60,19 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when(event?.action) {
             MotionEvent.ACTION_DOWN -> {
-                val col = ((event.x - originX) / cellSize).toInt()
-                val row = ((event.y - originY) / cellSize).toInt()
-                Log.d(TAG, "down (${col}, ${row})")
+                fromCol = ((event.x - originX) / cellSize).toInt()
+                fromRow = 7 - ((event.y - originY) / cellSize).toInt()
+                // Log.d(TAG, "down (${col}, ${row})")
             }
             MotionEvent.ACTION_MOVE -> {
                 Log.d(TAG, "move")
             }
             MotionEvent.ACTION_UP -> {
                 val col = ((event.x - originX) / cellSize).toInt()
-                val row = ((event.y - originY) / cellSize).toInt()
-                Log.d(TAG, "up (${col}, ${row})")
+                val row = 7 - ((event.y - originY) / cellSize).toInt()
+
+                chessDelegate?.movePiece(fromCol, fromRow, col, row)
+                Log.d(TAG, "from (${fromCol}, ${fromRow}) to (${col}, ${row})")
             }
         }
         return true
@@ -112,10 +116,10 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
             }
         }
 
-        paint.strokeWidth = 3f
-        paint.style = Paint.Style.STROKE
-        paint.color = Color.argb(255, 0, 0, 0)
-        canvas.drawRect(originX, originY, originX + 8 * cellSize, originY + 8 * cellSize, paint)
+        //paint.strokeWidth = 3f
+        //paint.style = Paint.Style.STROKE
+        //paint.color = Color.argb(255, 0, 0, 0)
+        //canvas.drawRect(originX, originY, originX + 8 * cellSize, originY + 8 * cellSize, paint)
     }
 
     private fun drawSquareAt(canvas: Canvas, col: Int, row: Int, isDark: Boolean) {
