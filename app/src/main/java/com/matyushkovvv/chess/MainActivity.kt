@@ -17,8 +17,7 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val chessView = findViewById<ChessView>(R.id.chess_view)
-        chessView.chessDelegate = this
+        findViewById<ChessView>(R.id.chess_view).chessDelegate = this
     }
 
     override fun pieceAt(col: Int, row: Int): ChessPiece? {
@@ -29,7 +28,6 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
         chessModel.movePiece(fromCol, fromRow, toCol, toRow)
 
         // Перерисовываем всю доску заново
-        val chessView = findViewById<ChessView>(R.id.chess_view)
-        chessView.invalidate()
+        findViewById<ChessView>(R.id.chess_view).invalidate()
     }
 }
