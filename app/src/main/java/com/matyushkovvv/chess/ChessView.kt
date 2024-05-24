@@ -51,6 +51,12 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
         loadBitmap()
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val smaller = min(widthMeasureSpec, heightMeasureSpec)
+        setMeasuredDimension(smaller, smaller)
+    }
+
     override fun onDraw(canvas: Canvas) {
 
         val chessBoardSide = min(height, width) * scaleFactor
@@ -78,7 +84,7 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
                 movingPieceX = event.x
                 movingPieceY = event.y
                 invalidate()
-                Log.d(TAG, "move")
+                // Log.d(TAG, "move")
             }
             MotionEvent.ACTION_UP -> {
                 val col = ((event.x - originX) / cellSize).toInt()
