@@ -12,15 +12,15 @@ import kotlin.math.min
 
 class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
 
-    private final val scaleFactor = 0.9f
-    private final var cellSize: Float = 0f
-    private final var originX: Float = 0f
-    private final var originY: Float = 0f
-    
-    private final val lightColor = Color.parseColor("#769656")
-    private final val darkColor = Color.parseColor("#eeeed2")
+    private val scaleFactor = 0.9f
+    private var cellSize: Float = 0f
+    private var originX: Float = 0f
+    private var originY: Float = 0f
 
-    private final val imgResIDs = setOf(
+    private val lightColor = Color.parseColor("#769656")
+    private val darkColor = Color.parseColor("#eeeed2")
+
+    private val imgResIDs = setOf(
         R.drawable.king_white,
         R.drawable.queen_white,
         R.drawable.rook_white,
@@ -35,8 +35,8 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
         R.drawable.pawn_black
     )
 
-    private final val bitmaps = mutableMapOf<Int, Bitmap>()
-    private final val paint = Paint()
+    private val bitmaps = mutableMapOf<Int, Bitmap>()
+    private val paint = Paint()
 
     private var movingPieceBitmap: Bitmap? = null
     private var movingPiece: ChessPiece? = null
@@ -74,6 +74,7 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
                 fromCol = ((event.x - originX) / cellSize).toInt()
                 fromRow = 7 - ((event.y - originY) / cellSize).toInt()
 
+                // Если фигура найдена, тогда сохраняется ее копия и битмап
                 chessDelegate?.pieceAt(fromCol, fromRow)?.let {
                     movingPiece = it
                     movingPieceBitmap = bitmaps[it.resID]
@@ -83,6 +84,8 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
             MotionEvent.ACTION_MOVE -> {
                 movingPieceX = event.x
                 movingPieceY = event.y
+
+                // Обновление экрана, при передвижения фигуры
                 invalidate()
                 // Log.d(TAG, "move")
             }
@@ -90,6 +93,7 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
                 val col = ((event.x - originX) / cellSize).toInt()
                 val row = 7 - ((event.y - originY) / cellSize).toInt()
 
+                // Фигура передвинута, переменные обнулены
                 chessDelegate?.movePiece(fromCol, fromRow, col, row)
                 movingPieceBitmap = null
                 movingPiece = null
@@ -107,7 +111,9 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
                 //     chessDelegate?.pieceAt(col, row)?.let { drawPieceAt(canvas, col, row, it.resID)}
                 // }
 
+                // Если фигура найдена
                 chessDelegate?.pieceAt(col, row)?.let {
+                    // Если найденная фигура не равна перемещаемой, тогда она передвигается
                     if (it != movingPiece) {
                         drawPieceAt(canvas, col, row, it.resID)
                     }
@@ -115,6 +121,7 @@ class ChessView(context: Context?, attrs: AttributeSet?): View(context, attrs) {
             }
         }
 
+        // отрисовка фигуры, на которое сделали нажатие
         movingPieceBitmap?.let {
             canvas.drawBitmap(
                 it,

@@ -2,7 +2,7 @@ package com.matyushkovvv.chess
 
 import android.util.Log
 
-class ChessModel {
+object ChessGame {
 
     var piecesBox = mutableSetOf<ChessPiece>()
 
@@ -14,6 +14,7 @@ class ChessModel {
         if (fromCol == toCol && fromRow == toRow) return
         val movingPiece = pieceAt(fromCol, fromRow) ?: return
 
+        // Если пытаемся съесть себя
         pieceAt(toCol, toRow)?.let {
             if(it.player == movingPiece.player) {
                 Log.d(TAG,
@@ -25,8 +26,9 @@ class ChessModel {
             piecesBox.remove(it)
         }
 
+        // Удаление фигуры, когда ее съедают
         piecesBox.remove(movingPiece)
-        piecesBox.add(ChessPiece(toCol, toRow, movingPiece.player, movingPiece.rank, movingPiece.resID))
+        piecesBox.add(movingPiece.copy(col = toCol, row = toRow))
 
         Log.d(TAG, toString())
     }
